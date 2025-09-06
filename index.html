@@ -2,70 +2,114 @@
 <html lang="fr">
 <head>
 	<meta charset="UTF-8">
-	<title>Test Couleur (cookies)</title>
+	<title>Mini Cookie Clicker - Consentement</title>
 	<style>
 		body {
 			margin: 0;
 			font-family: Arial, sans-serif;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			flex-direction: column;
-			height: 100vh;
 			transition: background-color 0.3s ease;
 		}
-		.container {
-			text-align: center;
+		/* Bouton flottant */
+		#cookie-manager-btn {
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			background: chocolate;
+			color: white;
+			border: none;
+			border-radius: 50%;
+			width: 60px;
+			height: 60px;
+			cursor: pointer;
+			font-size: 30px;
+			box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+		}
+		/* Pop-up */
+		#cookie-popup {
+			display: none;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background: #fff;
 			padding: 20px;
+			width: 340px;
 			border: 2px solid #333;
 			border-radius: 10px;
-			background: white;
+			box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+			text-align: center;
+			z-index: 1000;
+		}
+		#big-cookie {
+			width: 100px;
+			height: 100px;
+			background: url("https://upload.wikimedia.org/wikipedia/commons/7/70/Cookie.png");
+			background-size: cover;
+			border-radius: 50%;
+			margin: 15px auto;
+			cursor: pointer;
+			transition: transform 0.1s;
+		}
+		#big-cookie:active {
+			transform: scale(0.9);
 		}
 		button {
 			margin: 5px;
-			padding: 10px 20px;
-			font-size: 16px;
+			padding: 8px 15px;
+			font-size: 14px;
 			cursor: pointer;
 			border: none;
 			border-radius: 5px;
 		}
-		.color-btn { background: #ddd; }
+		.store-btn { background: #ddd; }
 		.accept-btn { background: #4CAF50; color: white; }
 		.refuse-btn { background: #f44336; color: white; }
 	</style>
 </head>
 <body>
-	<div class="container">
-		<h1>Gestion des cookies</h1>
-		<div>
-			<button class="accept-btn" onclick="showColors()">Accepter</button>
-			<button class="refuse-btn" onclick="refuseCookies()">Refuser</button>
+	<!-- Bouton flottant -->
+	<button id="cookie-manager-btn" onclick="openPopup()">🍪</button>
+
+	<!-- Pop-up du mini-jeu -->
+	<div id="cookie-popup">
+		<h2>Gestion des cookies</h2>
+		<p>Cookies collectés : <span id="cookie-count">0</span></p>
+		<div id="big-cookie" onclick="clickCookie()"></div>
+		<p>🎯 Objectif : <span id="goal">20</span> cookies</p>
+
+		<div id="store">
+			<h3>Magasin</h3>
+			<button class="store-btn" onclick="buyUpgrade('click')">+1 par clic (coût 10)</button>
+			<button class="store-btn" onclick="buyUpgrade('auto')">Auto-click (coût 30)</button>
 		</div>
-		<div id="color-options" style="margin-top: 20px; display: none;">
-			<p>Choisis ta couleur :</p>
-			<button class="color-btn" onclick="setColor('red')">Rouge</button>
-			<button class="color-btn" onclick="setColor('green')">Vert</button>
-			<button class="color-btn" onclick="setColor('blue')">Bleu</button>
+
+		<!-- Sélecteur de couleur -->
+		<div id="color-menu" style="margin-top:15px; display:none;">
+			<h3>🎨 Choisis ton fond</h3>
+			<input type="color" id="colorPicker" onchange="setColor(this.value)">
+		</div>
+
+		<div id="choices" style="margin-top:15px;">
+			<button class="accept-btn" onclick="acceptCookies()" disabled>Accepter</button>
+			<button class="refuse-btn" onclick="refuseCookies()" disabled>Refuser</button>
 		</div>
 	</div>
 
 	<script>
-		// --- Gestion des cookies ---
+		// --- Fonctions cookies navigateur ---
 		function setCookie(name, value, days) {
 			const d = new Date();
 			d.setTime(d.getTime() + (days*24*60*60*1000));
-			const expires = "expires="+ d.toUTCString();
-			document.cookie = name + "=" + value + ";" + expires + ";path=/";
+			document.cookie = name + "=" + value + ";expires=" + d.toUTCString() + ";path=/";
 		}
 
 		function getCookie(name) {
 			const cname = name + "=";
-			const decodedCookie = decodeURIComponent(document.cookie);
-			const ca = decodedCookie.split(';');
-			for(let i=0; i<ca.length; i++) {
-				let c = ca[i].trim();
-				if (c.indexOf(cname) == 0) {
-					return c.substring(cname.length, c.length);
+			const ca = document.cookie.split(';');
+			for (let c of ca) {
+				c = c.trim();
+				if (c.indexOf(cname) === 0) {
+					return c.substring(cname.length);
 				}
 			}
 			return "";
@@ -75,19 +119,64 @@
 			document.cookie = name+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		}
 
-		// --- Gestion affichage ---
-		function showColors() {
-			document.getElementById('color-options').style.display = 'block';
+		// --- Mini Cookie Clicker ---
+		let cookies = parseInt(getCookie("cookies") || "0");
+		let perClick = parseInt(getCookie("perClick") || "1");
+		let autoClick = parseInt(getCookie("autoClick") || "0");
+		let bgColor = getCookie("bgcolor") || "";
+		const goal = 20;
+
+		const countEl = document.getElementById("cookie-count");
+		const acceptBtn = document.querySelector(".accept-btn");
+		const refuseBtn = document.querySelector(".refuse-btn");
+		const colorMenu = document.getElementById("color-menu");
+		const colorPicker = document.getElementById("colorPicker");
+
+		function updateDisplay() {
+			countEl.textContent = cookies;
+			// Débloquer les choix après l'objectif
+			if (cookies >= goal) {
+				acceptBtn.disabled = false;
+				refuseBtn.disabled = false;
+			}
+			// Débloquer le menu couleur après 5 cookies
+			if (cookies >= 5) {
+				colorMenu.style.display = "block";
+			}
 		}
 
-		function refuseCookies() {
-			eraseCookie("bgcolor");
-			document.body.style.backgroundColor = "";
-			alert("Cookies refusés.");
+		function clickCookie() {
+			cookies += perClick;
+			setCookie("cookies", cookies, 7);
+			updateDisplay();
 		}
 
+		function buyUpgrade(type) {
+			if (type === "click" && cookies >= 10) {
+				cookies -= 10;
+				perClick++;
+				setCookie("perClick", perClick, 7);
+			} else if (type === "auto" && cookies >= 30) {
+				cookies -= 30;
+				autoClick++;
+				setCookie("autoClick", autoClick, 7);
+			}
+			setCookie("cookies", cookies, 7);
+			updateDisplay();
+		}
+
+		setInterval(() => {
+			if (autoClick > 0) {
+				cookies += autoClick;
+				setCookie("cookies", cookies, 7);
+				updateDisplay();
+			}
+		}, 1000);
+
+		// --- Couleur du fond ---
 		function setColor(color) {
-			setCookie("bgcolor", color, 7);
+			bgColor = color;
+			setCookie("bgcolor", bgColor, 7);
 			applyColor();
 		}
 
@@ -95,11 +184,39 @@
 			const color = getCookie("bgcolor");
 			if (color) {
 				document.body.style.backgroundColor = color;
+				if (colorPicker) colorPicker.value = color; // maj du sélecteur
 			}
 		}
 
-		// Charger couleur au démarrage
-		window.onload = applyColor;
+		// --- Consentement ---
+		function acceptCookies() {
+			alert("Tu as accepté les cookies 🍪");
+			closePopup();
+		}
+
+		function refuseCookies() {
+			alert("Tu as refusé les cookies ❌");
+			// reset progression
+			setCookie("cookies", 0, 7);
+			setCookie("perClick", 1, 7);
+			setCookie("autoClick", 0, 7);
+			eraseCookie("bgcolor");
+			document.body.style.backgroundColor = "";
+			closePopup();
+		}
+
+		// --- Popup ---
+		function openPopup() {
+			document.getElementById("cookie-popup").style.display = "block";
+			updateDisplay();
+		}
+		function closePopup() {
+			document.getElementById("cookie-popup").style.display = "none";
+		}
+
+		// Charger progression
+		updateDisplay();
+		applyColor();
 	</script>
 </body>
 </html>
