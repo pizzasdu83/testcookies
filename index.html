@@ -193,20 +193,29 @@
 			// stocke dans les cookies
 			setCookie("bgcolor1", c1, 7);
 			setCookie("bgcolor2", c2, 7);
+			setCookie("bgangle", angle, 7);
 
 			applyGradient();
+		}
+		
+		function updateAngle(val) {
+			document.getElementById("angleValue").textContent = val;
+			setGradient();
 		}
 
 		function applyGradient() {
 			let c1 = getCookie("bgcolor1") || "#ffffff";
 			let c2 = getCookie("bgcolor2") || "#ffffff";
+			let angle = getCookie("bgangle") || "135";
 
-			document.body.style.background = `linear-gradient(135deg, ${c1}, ${c2})`;
+			document.body.style.background = `linear-gradient(${angle}deg, ${c1}, ${c2})`;
 
 			// mettre à jour les pickers si valeurs existantes
 			if (document.getElementById("colorPicker1")) {
 				document.getElementById("colorPicker1").value = c1;
 				document.getElementById("colorPicker2").value = c2;
+				document.getElementById("anglePicker").value = angle;
+				document.getElementById("angleValue").textContent = angle;
 			}
 		}
 
