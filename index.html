@@ -85,8 +85,19 @@
 
 		<!-- Sélecteur de couleur -->
 		<div id="color-menu" style="margin-top:15px; display:none;">
-			<h3>🎨 Choisis ton fond</h3>
-			<input type="color" id="colorPicker" onchange="setColor(this.value)">
+			<h3>🎨 Choisis ton fond (dégradé)</h3>
+			<div>
+				<label>Couleur 1 :</label>
+				<input type="color" id="colorPicker1" onchange="setGradient()">
+			</div>
+			<div>
+				<label>Couleur 2 :</label>
+				<input type="color" id="colorPicker2" onchange="setGradient()">
+			</div>
+			<div>
+				<label>Angle : <span id="angleValue">135</span>°</label><br>
+				<input type="range" id="anglePicker" min="0" max="360" value="135" oninput="updateAngle(this.value)">
+			</div>
 		</div>
 
 		<div id="choices" style="margin-top:15px;">
@@ -175,17 +186,27 @@
 		}, 1000);
 
 		// --- Couleur du fond ---
-		function setColor(color) {
-			bgColor = color;
-			setCookie("bgcolor", bgColor, 7);
-			applyColor();
+		function setGradient() {
+			let c1 = document.getElementById("colorPicker1").value;
+			let c2 = document.getElementById("colorPicker2").value;
+
+			// stocke dans les cookies
+			setCookie("bgcolor1", c1, 7);
+			setCookie("bgcolor2", c2, 7);
+
+			applyGradient();
 		}
 
-		function applyColor() {
-			const color = getCookie("bgcolor");
-			if (color) {
-				document.body.style.backgroundColor = color;
-				if (colorPicker) colorPicker.value = color; // maj du sélecteur
+		function applyGradient() {
+			let c1 = getCookie("bgcolor1") || "#ffffff";
+			let c2 = getCookie("bgcolor2") || "#ffffff";
+
+			document.body.style.background = `linear-gradient(135deg, ${c1}, ${c2})`;
+
+			// mettre à jour les pickers si valeurs existantes
+			if (document.getElementById("colorPicker1")) {
+				document.getElementById("colorPicker1").value = c1;
+				document.getElementById("colorPicker2").value = c2;
 			}
 		}
 
@@ -217,7 +238,7 @@
 
 		// Charger progression
 		updateDisplay();
-		applyColor();
+		applyGradient();
 	</script>
 </body>
 </html>
