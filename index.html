@@ -186,11 +186,12 @@
 		}, 1000);
 
 		// --- Couleur du fond ---
-		function setGradient() {
+		function setGradient(newAngle) {
 			let c1 = document.getElementById("colorPicker1").value;
 			let c2 = document.getElementById("colorPicker2").value;
+			let angle = newAngle !== undefined ? newAngle : document.getElementById("anglePicker").value;
 
-			// stocke dans les cookies
+			// stocker dans les cookies
 			setCookie("bgcolor1", c1, 7);
 			setCookie("bgcolor2", c2, 7);
 			setCookie("bgangle", angle, 7);
@@ -200,8 +201,9 @@
 		
 		function updateAngle(val) {
 			document.getElementById("angleValue").textContent = val;
-			setGradient();
+			setGradient(val); // passer l'angle en argument
 		}
+
 
 		function applyGradient() {
 			let c1 = getCookie("bgcolor1") || "#ffffff";
