@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Test Couleur (cookies)</title>
+	<style>
+		body {
+			margin: 0;
+			font-family: Arial, sans-serif;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+			height: 100vh;
+			transition: background-color 0.3s ease;
+		}
+		.container {
+			text-align: center;
+			padding: 20px;
+			border: 2px solid #333;
+			border-radius: 10px;
+			background: white;
+		}
+		button {
+			margin: 5px;
+			padding: 10px 20px;
+			font-size: 16px;
+			cursor: pointer;
+			border: none;
+			border-radius: 5px;
+		}
+		.color-btn { background: #ddd; }
+		.accept-btn { background: #4CAF50; color: white; }
+		.refuse-btn { background: #f44336; color: white; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Gestion des cookies</h1>
+		<div>
+			<button class="accept-btn" onclick="showColors()">Accepter</button>
+			<button class="refuse-btn" onclick="refuseCookies()">Refuser</button>
+		</div>
+		<div id="color-options" style="margin-top: 20px; display: none;">
+			<p>Choisis ta couleur :</p>
+			<button class="color-btn" onclick="setColor('red')">Rouge</button>
+			<button class="color-btn" onclick="setColor('green')">Vert</button>
+			<button class="color-btn" onclick="setColor('blue')">Bleu</button>
+		</div>
+	</div>
+
+	<script>
+		// --- Gestion des cookies ---
+		function setCookie(name, value, days) {
+			const d = new Date();
+			d.setTime(d.getTime() + (days*24*60*60*1000));
+			const expires = "expires="+ d.toUTCString();
+			document.cookie = name + "=" + value + ";" + expires + ";path=/";
+		}
+
+		function getCookie(name) {
+			const cname = name + "=";
+			const decodedCookie = decodeURIComponent(document.cookie);
+			const ca = decodedCookie.split(';');
+			for(let i=0; i<ca.length; i++) {
+				let c = ca[i].trim();
+				if (c.indexOf(cname) == 0) {
+					return c.substring(cname.length, c.length);
+				}
+			}
+			return "";
+		}
+
+		function eraseCookie(name) {
+			document.cookie = name+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+		}
+
+		// --- Gestion affichage ---
+		function showColors() {
+			document.getElementById('color-options').style.display = 'block';
+		}
+
+		function refuseCookies() {
+			eraseCookie("bgcolor");
+			document.body.style.backgroundColor = "";
+			alert("Cookies refusés.");
+		}
+
+		function setColor(color) {
+			setCookie("bgcolor", color, 7);
+			applyColor();
+		}
+
+		function applyColor() {
+			const color = getCookie("bgcolor");
+			if (color) {
+				document.body.style.backgroundColor = color;
+			}
+		}
+
+		// Charger couleur au démarrage
+		window.onload = applyColor;
+	</script>
+</body>
+</html>
