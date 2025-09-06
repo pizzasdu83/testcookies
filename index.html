@@ -186,12 +186,11 @@
 		}, 1000);
 
 		// --- Couleur du fond ---
-		function setGradient(newAngle) {
+		function setGradient() {
 			let c1 = document.getElementById("colorPicker1").value;
 			let c2 = document.getElementById("colorPicker2").value;
-			let angle = newAngle !== undefined ? newAngle : document.getElementById("anglePicker").value;
 
-			// stocker dans les cookies
+			// stocke dans les cookies
 			setCookie("bgcolor1", c1, 7);
 			setCookie("bgcolor2", c2, 7);
 			setCookie("bgangle", angle, 7);
@@ -201,25 +200,30 @@
 		
 		function updateAngle(val) {
 			document.getElementById("angleValue").textContent = val;
-			setGradient(val); // passer l'angle en argument
+			setGradient();
 		}
-
 
 		function applyGradient() {
 			let c1 = getCookie("bgcolor1") || "#ffffff";
 			let c2 = getCookie("bgcolor2") || "#ffffff";
 			let angle = getCookie("bgangle") || "135";
-
-			document.body.style.background = `linear-gradient(${angle}deg, ${c1}, ${c2})`;
-
-			// mettre à jour les pickers si valeurs existantes
-			if (document.getElementById("colorPicker1")) {
-				document.getElementById("colorPicker1").value = c1;
-				document.getElementById("colorPicker2").value = c2;
-				document.getElementById("anglePicker").value = angle;
-				document.getElementById("angleValue").textContent = angle;
+			
+			if (c1 && c2) {
+				document.body.style.background = `linear-gradient(${angle}deg, ${c1}, ${c2})`;
 			}
-		}
+
+			// mettre à jour les pickers si existants
+			const cp1 = document.getElementById("colorPicker1");
+			const cp2 = document.getElementById("colorPicker2");
+			const ap = document.getElementById("anglePicker");
+			const angleVal = document.getElementById("angleValue");
+			if (cp1 && cp2 && ap && angleVal) {
+				cp1.value = c1;
+				cp2.value = c2;
+				ap.value = angle;
+				angleVal.textContent = angle;
+				}
+			}
 
 		// --- Consentement ---
 		function acceptCookies() {
@@ -234,7 +238,7 @@
 			setCookie("perClick", 1, 7);
 			setCookie("autoClick", 0, 7);
 			eraseCookie("bgcolor");
-			document.body.style.backgroundColor = "";
+			document.body.style.background = "";
 			closePopup();
 		}
 
