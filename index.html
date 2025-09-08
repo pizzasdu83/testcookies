@@ -7,6 +7,7 @@
 		body {
 			margin: 0;
 			font-family: Arial, sans-serif;
+			transition: background-color 0.3s ease;
 		}
 		/* Bouton flottant */
 		#cookie-manager-btn {
@@ -65,7 +66,7 @@
 		.refuse-btn { background: #f44336; color: white; }
 	</style>
 </head>
-<body style="background: linear-gradient(143deg, rgb(255, 0, 0), rgb(0, 0, 255));">
+<body>
 	<!-- Bouton flottant -->
 	<button id="cookie-manager-btn" onclick="openPopup()">🍪</button>
 
@@ -84,19 +85,8 @@
 
 		<!-- Sélecteur de couleur -->
 		<div id="color-menu" style="margin-top:15px; display:none;">
-			<h3>🎨 Choisis ton fond (dégradé)</h3>
-			<div>
-				<label>Couleur 1 :</label>
-				<input type="color" id="colorPicker1" onchange="setGradient()">
-			</div>
-			<div>
-				<label>Couleur 2 :</label>
-				<input type="color" id="colorPicker2" onchange="setGradient()">
-			</div>
-			<div>
-				<label>Angle : <span id="angleValue">135</span>°</label><br>
-				<input type="range" id="anglePicker" min="0" max="360" value="135" oninput="updateAngle(this.value)">
-			</div>
+			<h3>🎨 Choisis ton fond</h3>
+			<input type="color" id="colorPicker" onchange="setColor(this.value)">
 		</div>
 
 		<div id="choices" style="margin-top:15px;">
@@ -185,44 +175,19 @@
 		}, 1000);
 
 		// --- Couleur du fond ---
-		function setGradient() {
-			let c1 = document.getElementById("colorPicker1").value;
-			let c2 = document.getElementById("colorPicker2").value;
-
-			// stocke dans les cookies
-			setCookie("bgcolor1", c1, 7);
-			setCookie("bgcolor2", c2, 7);
-			setCookie("bgangle", angle, 7);
-
-			applyGradient();
-		}
-		
-		function updateAngle(val) {
-			document.getElementById("angleValue").textContent = val;
-			setGradient();
+		function setColor(color) {
+			bgColor = color;
+			setCookie("bgcolor", bgColor, 7);
+			applyColor();
 		}
 
-		function applyGradient() {
-			let c1 = getCookie("bgcolor1") || "#ffffff";
-			let c2 = getCookie("bgcolor2") || "#ffffff";
-			let angle = getCookie("bgangle") || "135";
-			
-			if (c1 && c2) {
-				document.body.style.background = `linear-gradient(${angle}deg, ${c1}, ${c2})`;
+		function applyColor() {
+			const color = getCookie("bgcolor");
+			if (color) {
+				document.body.style.backgroundColor = color;
+				if (colorPicker) colorPicker.value = color; // maj du sélecteur
 			}
-
-			// mettre à jour les pickers si existants
-			const cp1 = document.getElementById("colorPicker1");
-			const cp2 = document.getElementById("colorPicker2");
-			const ap = document.getElementById("anglePicker");
-			const angleVal = document.getElementById("angleValue");
-			if (cp1 && cp2 && ap && angleVal) {
-				cp1.value = c1;
-				cp2.value = c2;
-				ap.value = angle;
-				angleVal.textContent = angle;
-				}
-			}
+		}
 
 		// --- Consentement ---
 		function acceptCookies() {
@@ -237,7 +202,7 @@
 			setCookie("perClick", 1, 7);
 			setCookie("autoClick", 0, 7);
 			eraseCookie("bgcolor");
-			document.body.style.background = "";
+			document.body.style.backgroundColor = "";
 			closePopup();
 		}
 
@@ -252,6 +217,7 @@
 
 		// Charger progression
 		updateDisplay();
+		applyColor();
 	</script>
 </body>
 </html>
