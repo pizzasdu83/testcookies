@@ -15,7 +15,7 @@
 		}
 		body.image {
  		 	height: 100vh;  
-		  	background-image:url("https://raw.githubusercontent.com/pizzasdu83/ressources/main/snas/fondo.jpg");
+		  	background-image:url("https://raw.githubusercontent.com/pizzasdu83/ressources/main/suyu__Pattern-Background.png");
   			background-position: center;
 		}
 		/* Bouton flottant */
@@ -124,7 +124,16 @@
 		<!-- Sélecteur de couleur -->
 		<div id="color-menu" style="margin-top:15px; display:none;">
 			<h3>🎨 Choisis ton fond</h3>
-			<input type="color" id="colorPicker" onchange="setColor(this.value)">
+				<label>
+					<input type="radio" name="bgmode" value="free" checked onchange="setBackgroundMode(this.value)">○Couleure libre
+				</label>
+					<input type="color" id="colorPicker" onchange="setColor(this.value)">
+				<label>
+					<input type="radio" name="bgmode" value="preset-gradient" onchange="setBackgroundMode(this.value)">○Couleure Signature
+				</label>
+				<label>
+					<input type="radio" name="bgmode" value="preset-image" onchange="setBackgroundMode(this.value)">○Suyu
+				</label>
 		</div>
 
 		<div id="choices" style="margin-top:15px;">
