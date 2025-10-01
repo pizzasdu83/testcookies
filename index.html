@@ -125,14 +125,14 @@
 		<div id="color-menu" style="margin-top:15px; display:none;">
 			<h3>🎨 Choisis ton fond</h3>
 				<label>
-					<input type="radio" name="bgmode" value="free" checked onchange="setBackgroundMode(this.value)">○Couleure libre
-				</label>
+					<input type="radio" name="bgmode" value="free" checked onchange="setBackgroundMode(this.value)">Couleure libre
+				</label><br>
 					<input type="color" id="colorPicker" onchange="setColor(this.value)">
 				<label>
-					<input type="radio" name="bgmode" value="preset-gradient" onchange="setBackgroundMode(this.value)">○Couleure Signature
-				</label>
+					<input type="radio" name="bgmode" value="preset-gradient" onchange="setBackgroundMode(this.value)">Couleure Signature
+				</label><br>
 				<label>
-					<input type="radio" name="bgmode" value="preset-image" onchange="setBackgroundMode(this.value)">○Suyu
+					<input type="radio" name="bgmode" value="preset-image" onchange="setBackgroundMode(this.value)">Suyu
 				</label>
 		</div>
 
@@ -266,6 +266,45 @@
 		function closePopup() {
 			document.getElementById("cookie-popup").style.display = "none";
 			opened = 0
+		}
+
+		function setBackgroundMode(mode) {
+			setCookie("bgmode", mode, 7);
+			applyBackground();
+		}
+
+		function setColor(color) {
+			setCookie("bgcolor", color, 7);
+			setCookie("bgmode", "free", 7);
+			applyBackground();
+		}
+
+// Applique le fond selon le mode
+		function applyBackground() {
+			let mode = getCookie("bgmode") || "free";
+
+	// reset classes
+			document.body.classList.remove("color", "gradient", "image");
+			document.body.style.background = "";
+			document.body.style.backgroundColor = "";
+			document.body.style.backgroundImage = "";
+
+			if (mode === "free") {
+				let color = getCookie("bgcolor") || "#ffffff";
+				document.body.classList.add("color");
+				document.body.style.backgroundColor = color;
+				if (colorPicker) colorPicker.value = color; // MAJ du picker
+			} else if (mode === "preset-gradient") {
+				document.body.classList.add("gradient");
+			} else if (mode === "preset-image") {
+				document.body.classList.add("image");
+			}
+
+	// cocher le bon radio
+			let radios = document.querySelectorAll('input[name="bgmode"]');
+			radios.forEach(r => {
+				r.checked = (r.value === mode);
+			});
 		}
 
 		// Charger progression
