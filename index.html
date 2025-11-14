@@ -26,6 +26,13 @@
 			height: 100vh;
 			background-image:url("https://raw.githubusercontent.com/pizzasdu83/ressources/main/suyu__Pattern-Background.png"); no-repeat;
 		}
+		body.preview {
+			margin: 0;
+			padding: 0;
+			height: 100vh;
+			background-size: cover;
+			background-position: center;
+		}
 		/* Bouton flottant */
 		#cookie-manager-btn {
 			position: fixed;
@@ -68,6 +75,13 @@
 		}
 		#big-cookie:active {
 			transform: scale(0.9);
+		}
+		#preview {
+			margin: 0;
+			padding: 0;
+			height: 100vh;
+			background-size: cover;
+			background-position: center;
 		}
 		button {
 			margin: 5px;
@@ -141,7 +155,14 @@
 				</label><br>
 				<label>
 					<input type="radio" name="bgmode" value="preset-image" onchange="setBackgroundMode(this.value)">Suyu
+				</label><br>
+				<label>
+					<input type="radio" name="bgmode" value="persimage" checked onchange="setBackgroundMode(this.value)">Image libre
 				</label>
+				<label>
+				<input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" />
+				</label>
+				
 		</div>
 
 		<div id="choices" style="margin-top:15px;">
@@ -306,6 +327,17 @@
 				document.body.classList.add("gradient");
 			} else if (mode === "preset-image") {
 				document.body.classList.add("image");
+			} else if (mode === "persimage") {
+				document.getElementById("avatar").addEventListener("change", function () {
+					const file = this.files[0];
+					if (!file) return;
+
+					const url = URL.createObjectURL(file);
+					document.body.classList.add("preview");
+
+					const preview = document.getElementById("preview");
+					body.preview.style.backgroundImage = `url(${url})`;
+				});
 			}
 
 	// cocher le bon radio
