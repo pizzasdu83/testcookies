@@ -328,17 +328,32 @@
 			} else if (mode === "preset-image") {
 				document.body.classList.add("image");
 			} else if (mode === "persimage") {
-				document.getElementById("avatar").addEventListener("change", function () {
-					const file = this.files[0];
-					if (!file) return;
+			const avatarInput = document.getElementById("avatar");
 
-					const url = URL.createObjectURL(file);
-					document.body.classList.add("preview");
+			avatarInput.addEventListener("change", function () {
+				const file = this.files[0];
+				if (!file) return;
 
-					const preview = document.getElementById("preview");
-					preview.style.backgroundImage = `url(${url})`;
-				});
+				const url = URL.createObjectURL(file);
+
+				document.body.classList.add("preview");
+				document.body.style.backgroundImage = `url(${url})`;
+
+				// sauvegarde en cookie (base64)
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					setCookie("bgimage", e.target.result, 7);
+				};
+				reader.readAsDataURL(file);
+			});
+
+			// si une image est déjà sauvegardée → l'afficher
+			const savedImg = getCookie("bgimage");
+			if (savedImg) {
+				document.body.classList.add("preview");
+				document.body.style.backgroundImage = `url(${savedImg})`;
 			}
+		}
 
 	// cocher le bon radio
 			let radios = document.querySelectorAll('input[name="bgmode"]');
