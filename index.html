@@ -328,32 +328,34 @@
 			} else if (mode === "preset-image") {
 				document.body.classList.add("image");
 			} else if (mode === "persimage") {
-			const avatarInput = document.getElementById("avatar");
+				const input = document.getElementById("avatar");
 
-			avatarInput.addEventListener("change", function () {
-				const file = this.files[0];
-				if (!file) return;
+				input.addEventListener("change", function () {
+					const file = this.files[0];
+					if (!file) return;
 
-				const url = URL.createObjectURL(file);
+					const reader = new FileReader();
 
-				document.body.classList.add("preview");
-				document.body.style.backgroundImage = `url(${url})`;
+					reader.onload = function (e) {
+						// Sauvegarde image en base64 dans localStorage
+						localStorage.setItem("bgimage", e.target.result);
 
-				// sauvegarde en cookie (base64)
-				const reader = new FileReader();
-				reader.onload = function (e) {
-					setCookie("bgimage", e.target.result, 7);
-				};
-				reader.readAsDataURL(file);
-			});
+						// Applique l'image en fond
+						document.body.classList.add("preview");
+						document.body.style.backgroundImage = `url(${e.target.result})`;
+					};
 
-			// si une image est déjà sauvegardée → l'afficher
-			const savedImg = getCookie("bgimage");
-			if (savedImg) {
-				document.body.classList.add("preview");
-				document.body.style.backgroundImage = `url(${savedImg})`;
+					reader.readAsDataURL(file);
+				});
+
+				// Recharge si une image custom existe déjà
+				const savedImg = localStorage.getItem("bgimage");
+
+				if (savedImg) {
+					document.body.classList.add("preview");
+					document.body.style.backgroundImage = `url(${savedImg})`;
+				}
 			}
-		}
 
 	// cocher le bon radio
 			let radios = document.querySelectorAll('input[name="bgmode"]');
