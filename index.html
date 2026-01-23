@@ -33,6 +33,21 @@
 			background-size: cover;
 			background-position: center;
 		}
+		body.fallin {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Empêche le défilement de la page */
+			animation: arcEnCiel 10s linear infinite;
+        }
+        .falling-image {
+            position: absolute;
+            top: -100px; /* Commence au-dessus de l'écran */
+            pointer-events: none; /* L'image ne bloque pas les clics */
+            z-index: 1000;
+            /* Animation : nom | durée | linéaire | infini */
+            animation: fall linear forwards;
+        }
+		
 		/* Bouton flottant */
 		#cookie-manager-btn {
 			position: fixed;
@@ -120,6 +135,27 @@
 				opacity: 1;
 			}
 		}
+		@keyframes arcEnCiel {
+            0%   { background-color: #ff0000; } /* Rouge */
+            8%  { background-color: #ff8000; } /* Orange */
+            17%  { background-color: #ffff00; } /* Jaune */
+            25%  { background-color: #00ff00; } /* Vert */
+            33%  { background-color: #0000ff; } /* Bleu */
+            41%  { background-color: #4b0082; } /* Indigo */
+            50% { background-color: #ff0000; } /* Retour au Rouge */
+			58%  { background-color: #ff8000; } /* Orange */
+            67%  { background-color: #ffff00; } /* Jaune */
+            75%  { background-color: #00ff00; } /* Vert */
+            83%  { background-color: #0000ff; } /* Bleu */
+            92%  { background-color: #4b0082; } /* Indigo */
+            100% { background-color: #ff0000; } /* Retour au Rouge */
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) translateX(-110vh) rotate(var(--scale-y)) scaleY(-1);
+            }
+        }
+		
 		.store-btn { background: #ddd; }
 		.accept-btn { background: #4CAF50; color: white; }
 		.refuse-btn { background: #f44336; color: white; }
@@ -132,42 +168,45 @@
 
 	<!-- Pop-up du mini-jeu -->
 	<div id="cookie-popup">
-		<h2>Gestion des cookies</h2>
-		<p>Cookies collectés : <span id="cookie-count">0</span></p>
+		<h2>cookies gestion</h2>
+		<p>Colected cookies : <span id="cookie-count">0</span></p>
 		<div id="big-cookie" onclick="clickCookie()"></div>
-		<p>🎯 Objectif : <span id="goal">1000</span> cookies</p>
+		<p>🎯 Goal : <span id="goal">1000</span> cookies</p>
 
 		<div id="store">
-			<h3>Magasin</h3>
+			<h3>Market</h3>
 			<button class="store-btn" onclick="buyUpgrade('click')">+1 par clic (coût 10)</button>
 			<button class="store-btn" onclick="buyUpgrade('auto')">Auto-click (coût 30)</button>
 		</div>
 
 		<!-- Sélecteur de couleur -->
 		<div id="color-menu" style="margin-top:15px; display:none;">
-			<h3>🎨 Choisis ton fond</h3>
+			<h3>🎨 Choose your background</h3>
 				<label>
-					<input type="radio" name="bgmode" value="free" checked onchange="setBackgroundMode(this.value)">Couleure libre
+					<input type="radio" name="bgmode" value="free" checked onchange="setBackgroundMode(this.value)">Free color
 				</label><br>
 					<input type="color" id="colorPicker" onchange="setColor(this.value)">
 				<label>
-					<input type="radio" name="bgmode" value="preset-gradient" onchange="setBackgroundMode(this.value)">Couleure Signature
+					<input type="radio" name="bgmode" value="preset-gradient" onchange="setBackgroundMode(this.value)">Signature color
 				</label><br>
 				<label>
 					<input type="radio" name="bgmode" value="preset-image" onchange="setBackgroundMode(this.value)">Suyu
 				</label><br>
 				<label>
-					<input type="radio" name="bgmode" value="persimage" checked onchange="setBackgroundMode(this.value)">Image libre
+					<input type="radio" name="bgmode" value="persimage" checked onchange="setBackgroundMode(this.value)">Image
 				</label>
 				<label>
 				<input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" />
+				</label>
+				<label>
+					<input type="radio" name="bgmode" value="fallin" checked onchange="setBackgroundMode(this.value)">Boykisser
 				</label>
 				
 		</div>
 
 		<div id="choices" style="margin-top:15px;">
-			<button class="accept-btn" onclick="acceptCookies()" enabled>Accepter</button>
-			<button class="refuse-btn" onclick="refuseCookies()" disabled>Refuser</button>
+			<button class="accept-btn" onclick="acceptCookies()" enabled>Accept</button>
+			<button class="refuse-btn" onclick="refuseCookies()" disabled>Deny</button>
 		</div>
 	</div>
 
@@ -267,12 +306,12 @@
 
 		// --- Consentement ---
 		function acceptCookies() {
-			alert("Tu as accepté les cookies 🍪");
+			alert("You accepted the cookies 🍪");
 			closePopup();
 		}
 
 		function refuseCookies() {
-			alert("Tu as refusé les cookies ❌");
+			alert("You denied cookies >:3");
 			// reset progression
 			setCookie("cookies", 0, 7);
 			setCookie("perClick", 1, 7);
@@ -327,6 +366,8 @@
 				document.body.classList.add("gradient");
 			} else if (mode === "preset-image") {
 				document.body.classList.add("image");
+			} else if (mode === "fallin") {
+				document.body.classList.add("fallin");
 			} else if (mode === "persimage") {
 				const input = document.getElementById("avatar");
 
@@ -367,10 +408,42 @@
 			setCookie("bgmode", mode, 7);
 			applyBackground();
 		}
+		function createFallingImage() {
+            const img = document.createElement('img');
+            img.src = '1.webp'; // Votre image
+            img.classList.add('falling-image');
+
+            // --- Personnalisation aléatoire ---
+            
+			const randomScale = Math.floor(Math.random() * 720) - 360;
+			img.style.setProperty('--scale-y', randomScale + "deg");
+			
+            // Position horizontale aléatoire (0 à 100% de la largeur)
+            img.style.left = Math.random() * 300 + "vh";
+            
+            // Taille aléatoire (entre 30px et 80px)
+            const size = Math.random() * (200 - 30) + 30;
+            img.style.width = size + "px";
+            
+            // Vitesse de chute aléatoire (entre 3s et 8s)
+            const duration = Math.random() * (3 - 1) + 1;
+            img.style.animationDuration = duration + "s";
+            
+            // Opacité aléatoire pour donner de la profondeur
+            img.style.opacity = Math.random() * (1 - 0.4) + 0.4;
+
+            document.body.appendChild(img);
+
+            // Supprimer l'élément après l'animation pour ne pas ralentir le navigateur
+            setTimeout(() => {
+                img.remove();
+            }, duration * 1000);
+        }
 		// Charger progression
 		updateDisplay();
 		applyColor();
 		applyBackground();
+		setInterval(createFallingImage, 20);
 	</script>
 </body>
 </html>
