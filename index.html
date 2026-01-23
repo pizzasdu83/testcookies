@@ -362,10 +362,13 @@
 				document.body.classList.add("color");
 				document.body.style.backgroundColor = color;
 				if (colorPicker) colorPicker.value = color; // MAJ du picker
+				clearInterval(createFallingImage);
 			} else if (mode === "preset-gradient") {
 				document.body.classList.add("gradient");
+				clearInterval(createFallingImage);
 			} else if (mode === "preset-image") {
 				document.body.classList.add("image");
+				clearInterval(createFallingImage);
 			} else if (mode === "fallin") {
 				document.body.classList.add("fallin");
 				setInterval(createFallingImage, 20);
@@ -397,6 +400,7 @@
 					document.body.classList.add("preview");
 					document.body.style.backgroundImage = `url(${savedImg})`;
 				}
+				clearInterval(createFallingImage);
 			}
 
 	// cocher le bon radio
