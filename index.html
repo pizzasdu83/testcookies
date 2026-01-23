@@ -368,6 +368,7 @@
 				document.body.classList.add("image");
 			} else if (mode === "fallin") {
 				document.body.classList.add("fallin");
+				setInterval(createFallingImage, 20);
 			} else if (mode === "persimage") {
 				const input = document.getElementById("avatar");
 
@@ -443,7 +444,6 @@
 		updateDisplay();
 		applyColor();
 		applyBackground();
-		setInterval(createFallingImage, 20);
 	</script>
 </body>
 </html>
