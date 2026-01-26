@@ -206,7 +206,7 @@
 					<input type="radio" name="bgmode" value="fallin" checked onchange="setBackgroundMode(this.value)">Boykisser
 				</label><br>
 			
-				<button class="clrInterval" onclick="clearInterval(createFallingImage);" enabled>stop boykissing</button>
+				<button class="clrInterval" onclick="clearInterval(fallin);" enabled>stop boykissing</button>
 				
 		</div>
 
@@ -374,7 +374,7 @@
 				document.body.classList.add("image");
 			} else if (mode === "fallin") {
 				document.body.classList.add("fallin");
-				const createFallingImage = setInterval(createFallingImage, 20);
+				const fallin = setInterval(createFallingImage, 20);
 			} else if (mode === "persimage") {
 				const input = document.getElementById("avatar");
 
