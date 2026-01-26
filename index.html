@@ -8,6 +8,7 @@
 			padding: 0;
   			font-family: Arial, sans-serif;
   			transition: background-color 0.3s ease;
+			overflow: hidden;
 		}
 		body.gradient {
 			font-family: Arial, sans-serif;
@@ -16,6 +17,7 @@
 			padding: 0;
 			height: 100vh;
   			background: linear-gradient(to top right,rgba(0, 0, 255, 1) 0%, rgba(255, 0, 0, 1) 100%);
+			overflow: hidden;
 		}
 		body.image {
 			font-family: Arial, sans-serif;
@@ -24,6 +26,7 @@
 			padding: 0;
 			height: 100vh;
 			background-image:url("https://raw.githubusercontent.com/pizzasdu83/ressources/main/suyu__Pattern-Background.png"); no-repeat;
+			overflow: hidden;
 		}
 		body.preview {
 			margin: 0;
@@ -31,6 +34,7 @@
 			height: 100vh;
 			background-size: cover;
 			background-position: center;
+			overflow: hidden;
 		}
 		body.fallin {
             margin: 0;
@@ -157,7 +161,7 @@
 		
 		.store-btn { background: #ddd; }
 		.accept-btn { background: #4CAF50; color: white; }
-		.clrInterval { backgroud: #ddd; color: white; }
+		.clrInterval { backgroud: linear-gradient(to top right,rgba(0, 0, 255, 1) 0%, rgba(255, 0, 0, 1) 100%); }
 		.refuse-btn { background: #f44336; color: white; }
 
 	</style>
@@ -201,6 +205,7 @@
 				<label>
 					<input type="radio" name="bgmode" value="fallin" checked onchange="setBackgroundMode(this.value)">Boykisser
 				</label><br>
+			
 				<button class="clrInterval" onclick="clearInterval(createFallingImage);" enabled>stop boykissing</button>
 				
 		</div>
@@ -363,16 +368,13 @@
 				document.body.classList.add("color");
 				document.body.style.backgroundColor = color;
 				if (colorPicker) colorPicker.value = color; // MAJ du picker
-				clearInterval(createFallingImage);
 			} else if (mode === "preset-gradient") {
 				document.body.classList.add("gradient");
-				clearInterval(createFallingImage);
 			} else if (mode === "preset-image") {
 				document.body.classList.add("image");
-				clearInterval(createFallingImage);
 			} else if (mode === "fallin") {
 				document.body.classList.add("fallin");
-				setInterval(createFallingImage, 20);
+				const createFallingImage = setInterval(createFallingImage, 20);
 			} else if (mode === "persimage") {
 				const input = document.getElementById("avatar");
 
@@ -401,7 +403,6 @@
 					document.body.classList.add("preview");
 					document.body.style.backgroundImage = `url(${savedImg})`;
 				}
-				clearInterval(createFallingImage);
 			}
 
 	// cocher le bon radio
