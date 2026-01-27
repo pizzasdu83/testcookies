@@ -374,7 +374,6 @@
 				document.body.classList.add("image");
 			} else if (mode === "fallin") {
 				document.body.classList.add("fallin");
-				const fallin = setInterval(createFallingImage, 20);
 			} else if (mode === "persimage") {
 				const input = document.getElementById("avatar");
 
@@ -416,40 +415,43 @@
 			applyBackground();
 		}
 		function createFallingImage() {
-            const img = document.createElement('img');
-            img.src = '1.webp'; // Votre image
-            img.classList.add('falling-image');
+			if (mode === "fallin") {
+            	const img = document.createElement('img');
+            	img.src = '1.webp'; // Votre image
+            	img.classList.add('falling-image');
 
-            // --- Personnalisation aléatoire ---
+            	// --- Personnalisation aléatoire ---
             
-			const randomScale = Math.floor(Math.random() * 720) - 360;
-			img.style.setProperty('--scale-y', randomScale + "deg");
+				const randomScale = Math.floor(Math.random() * 720) - 360;
+				img.style.setProperty('--scale-y', randomScale + "deg");
 			
-            // Position horizontale aléatoire (0 à 100% de la largeur)
-            img.style.left = Math.random() * 300 + "vh";
+            	// Position horizontale aléatoire (0 à 100% de la largeur)
+            	img.style.left = Math.random() * 300 + "vh";
             
-            // Taille aléatoire (entre 30px et 80px)
-            const size = Math.random() * (200 - 30) + 30;
-            img.style.width = size + "px";
+            	// Taille aléatoire (entre 30px et 80px)
+            	const size = Math.random() * (200 - 30) + 30;
+            	img.style.width = size + "px";
             
-            // Vitesse de chute aléatoire (entre 3s et 8s)
-            const duration = Math.random() * (3 - 1) + 1;
-            img.style.animationDuration = duration + "s";
+            	// Vitesse de chute aléatoire (entre 3s et 8s)
+            	const duration = Math.random() * (3 - 1) + 1;
+            	img.style.animationDuration = duration + "s";
             
-            // Opacité aléatoire pour donner de la profondeur
-            img.style.opacity = Math.random() * (1 - 0.4) + 0.4;
+            	// Opacité aléatoire pour donner de la profondeur
+            	img.style.opacity = Math.random() * (1 - 0.4) + 0.4;
 
-            document.body.appendChild(img);
+            	document.body.appendChild(img);
 
-            // Supprimer l'élément après l'animation pour ne pas ralentir le navigateur
-            setTimeout(() => {
-                img.remove();
-            }, duration * 1000);
+            	// Supprimer l'élément après l'animation pour ne pas ralentir le navigateur
+            	setTimeout(() => {
+                	img.remove();
+            	}, duration * 1000);
+			}
         }
 		// Charger progression
 		updateDisplay();
 		applyColor();
 		applyBackground();
+		const fallin = setInterval(createFallingImage, 20);
 	</script>
 </body>
 </html>
