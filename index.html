@@ -415,6 +415,7 @@
 			applyBackground();
 		}
 		function createFallingImage() {
+			let mode = getCookie("bgmode") || "free";
 			if (mode === "fallin") {
             	const img = document.createElement('img');
             	img.src = '1.webp'; // Votre image
