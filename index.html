@@ -208,7 +208,7 @@
 				</label><br>
 				<label>
 					<input style="display: none;" type="number" min="0" max="99999" value="48798" id="aaa">
-					<button type="button" id="play-direct">Play tomodachi</button>
+					<input type="image" src="arrow.png" id="Gui-btn" onclick="openGPopup()" width="32" height="32"><button type="button" id="play-direct">Play tomodachi</button>
 				</label><br>
 			
 				<button class="clrInterval" onclick="clearInterval(fallin);" enabled>stop boykissing</button>
@@ -361,6 +361,20 @@
 		}
 		function closePopup() {
 			document.getElementById("cookie-popup").style.display = "none";
+			opened = 0
+		}
+		
+		function openGPopup() {
+			if (opened == 0){
+				document.getElementById("guiholder").style.display = "block";
+				opened = 1;
+			} else {
+				closePopup();
+			}
+			updateDisplay();
+		}
+		function closeGPopup() {
+			document.getElementById("guiholder").style.display = "none";
 			opened = 0
 		}
 
