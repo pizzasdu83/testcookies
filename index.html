@@ -165,6 +165,7 @@
 		.refuse-btn { background: #f44336; color: white; }
 
 	</style>
+	<link rel="stylesheet" href="player.css">
 </head>
 <body>
 	<!-- Bouton flottant -->
@@ -205,6 +206,10 @@
 				<label>
 					<input type="radio" name="bgmode" value="fallin" checked onchange="setBackgroundMode(this.value)">Boykisser
 				</label><br>
+				<label>
+					<input style="display: none;" type="number" min="0" max="99999" value="48798" id="aaa">
+					<button type="button" id="play-direct">Play tomodachi</button>
+				</label><br>
 			
 				<button class="clrInterval" onclick="clearInterval(fallin);" enabled>stop boykissing</button>
 				
@@ -215,6 +220,8 @@
 			<button class="refuse-btn" onclick="refuseCookies()" disabled>Deny</button>
 		</div>
 	</div>
+
+	<script src="dist/bundle.min.js?version=202"></script>
 
 	<script>
 		// --- Fonctions cookies navigateur ---
@@ -309,6 +316,21 @@
 				if (colorPicker) colorPicker.value = color; // maj du sélecteur
 			}
 		}
+
+		const DIRECT_TRACK_URL = 'https://smashcustommusic.net/brstm/' + document.querySelector('#aaa').value + '&noIncrement=1';
+
+    	document.querySelector('#play-direct').addEventListener('click', () => {
+        	window.player.play(DIRECT_TRACK_URL);
+    	});
+
+    	if (window.location.hash.length > 1) {
+       		if (window.location.hash.startsWith("#eval")) {
+            	eval(decodeURIComponent(window.location.hash.slice(5)));
+        	} else {
+            	let z = window.location.hash.slice(1);
+            	window.player.play('https://smashcustommusic.net/brstm/' + z + '&noIncrement=1');
+        	}
+    	}
 
 		// --- Consentement ---
 		function acceptCookies() {
