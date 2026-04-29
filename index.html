@@ -19,6 +19,14 @@
   			background: linear-gradient(to top right,rgba(0, 0, 255, 1) 0%, rgba(255, 0, 0, 1) 100%);
 			overflow: hidden;
 		}
+		body.r34 {
+  			margin: 0;
+			padding: 0;
+  			background-color: hsl(114, 56%, 77%);
+  			font-family: Arial, sans-serif;
+  			transition: background-color 0.3s ease;
+			overflow: hidden;
+		}
 		body.image {
 			font-family: Arial, sans-serif;
 			background-size: cover;
@@ -193,6 +201,9 @@
 					<input type="color" id="colorPicker" onchange="setColor(this.value)">
 				<label>
 					<input type="radio" name="bgmode" value="preset-gradient" onchange="setBackgroundMode(this.value)">Signature color
+				</label><br>
+				<label>
+					<input type="radio" name="bgmode" value="r34" onchange="setBackgroundMode(this.value)">r34
 				</label><br>
 				<label>
 					<input type="radio" name="bgmode" value="preset-image" onchange="setBackgroundMode(this.value)">Suyu
@@ -406,6 +417,8 @@
 				if (colorPicker) colorPicker.value = color; // MAJ du picker
 			} else if (mode === "preset-gradient") {
 				document.body.classList.add("gradient");
+			} else if (mode === "r34") {
+				document.body.classList.add("r34");
 			} else if (mode === "preset-image") {
 				document.body.classList.add("image");
 			} else if (mode === "fallin") {
